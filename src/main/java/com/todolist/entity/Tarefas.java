@@ -1,4 +1,4 @@
-package com.senai.todolist.entity;
+package com.todolist.entity;
 
 import jakarta.persistence.*;
 
