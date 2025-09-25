@@ -2,28 +2,43 @@ package com.todolist.controller;
 
 
 import com.todolist.entityModel.User;
+import com.todolist.exception.ResourceNotFoundException;
 import com.todolist.repositores.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("api/v1/users")
 public class UserController {
     @Autowired
-    UserRepo user;
+    UserRepo User;
 
     @PostMapping
     public User salvar() {
-        User joao = new User("João", "João@gmail.com", "123456");
-        return user.save(joao);
+        User newUser = new User("Gabriela", "gabriela@gmail.com", "gabilinda");
+        return User.save(newUser);
     }
 
     @GetMapping
     public List<User> mostrar() {
-        return user.findAll();
+        return User.findAll();
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<User> updateUser(@PathVariable long id, @RequestBody User userDetails) {
+        User updateUser = User.findById(id).orElseThrow(()
+                        -> new ResourceNotFoundException("Employee not exist with id: " + id));
+
+        updateUser.setNome(userDetails.getNome());
+        updateUser.setEmail(userDetails.getEmail());
+        updateUser.setSenha(userDetails.getSenha());
+
+        User.save(updateUser);
+
+        return ResponseEntity.ok(updateUser);
     }
 
 }
