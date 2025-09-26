@@ -5,6 +5,8 @@ import com.todolist.entityModel.User;
 import com.todolist.exception.ResourceNotFoundException;
 import com.todolist.repositores.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +18,16 @@ public class UserController {
     @Autowired
     UserRepo User;
 
-    @PostMapping
+    /*@PostMapping
     public User salvar() {
         User newUser = new User("Gabriela", "gabriela@gmail.com", "gabilinda");
         return User.save(newUser);
+    }*/
+
+    @PostMapping
+    public ResponseEntity<User> salvarUser(@RequestBody User user) {
+        User createdUser = User.save(user);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -34,7 +42,7 @@ public class UserController {
 
         updateUser.setNome(userDetails.getNome());
         updateUser.setEmail(userDetails.getEmail());
-        updateUser.setSenha(userDetails.getSenha());
+        updateUser.setSenha(passwordEncoder.encode(userDetails.getSenha()));
 
         User.save(updateUser);
 
