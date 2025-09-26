@@ -41,4 +41,13 @@ public class UserController {
         return ResponseEntity.ok(updateUser);
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable("id") long id){
+        User deleteUser = User.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("User not found with id" + id));
+
+        User.deleteById(id);
+        return ResponseEntity.ok("User deleted successfully!");
+    }
+
 }
