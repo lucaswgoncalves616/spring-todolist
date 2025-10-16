@@ -5,7 +5,6 @@ import com.todolist.entityModel.User;
 import com.todolist.exception.ResourceNotFoundException;
 import com.todolist.repositores.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,48 +12,58 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/users")
+@RequestMapping("api")
 public class UserController {
     @Autowired
-    UserRepo User;
+    UserRepo userRepo;
 
-    /*@PostMapping
-    public User salvar() {
-        User newUser = new User("Gabriela", "gabriela@gmail.com", "gabilinda");
-        return User.save(newUser);
-    }*/
+    @PostMapping(value = "user/signup")
+    public ResponseEntity<User> saveUser(@RequestBody User user) {
+        User createdUser = new User(user.getName(), user.getEmail(), user.getPassword());
+        userRepo.save(createdUser);
 
-    @PostMapping
-    public ResponseEntity<User> salvarUser(@RequestBody User user) {
-        User createdUser = User.save(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "user/signin")
+    public ResponseEntity<?> userLogin(@RequestBody User user){
+        User findUser = userRepo.findByEmail(user.getEmail());
+        if (findUser == null){
+            return ResponseEntity.ok("User Not found");
+        } else {
+            if (findUser.getPassword().equals(user.getPassword())) {
+                return ResponseEntity.ok("Ok");
+            } else {
+                return ResponseEntity.ok("Incorrect password");
+            }
+        }
+
     }
 
     @GetMapping
     public List<User> mostrar() {
-        return User.findAll();
+        return userRepo.findAll();
     }
 
     @PutMapping("{id}")
     public ResponseEntity<User> updateUser(@PathVariable long id, @RequestBody User userDetails) {
-        User updateUser = User.findById(id).orElseThrow(()
+        User updateUser = userRepo.findById(id).orElseThrow(()
                         -> new ResourceNotFoundException("Employee not exist with id: " + id));
 
-        updateUser.setNome(userDetails.getNome());
+        updateUser.setName(userDetails.getName());
         updateUser.setEmail(userDetails.getEmail());
-        updateUser.setSenha(passwordEncoder.encode(userDetails.getSenha()));
 
-        User.save(updateUser);
+        userRepo.save(updateUser);
 
         return ResponseEntity.ok(updateUser);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") long id){
-        User deleteUser = User.findById(id).orElseThrow(()
+        User deleteUser = userRepo.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("User not found with id" + id));
 
-        User.deleteById(id);
+        userRepo.deleteById(id);
         return ResponseEntity.ok("User deleted successfully!");
     }
 

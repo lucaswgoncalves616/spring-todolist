@@ -12,16 +12,16 @@ public class User {
     private long id;
 
     @Column(length = 50, nullable = false)
-    private String nome;
+    private String name;
     @Column(length = 50, nullable = false)
     private String email;
     @Column(length = 50, nullable = false)
-    private String senha;
+    private String password;
 
-    public User(String nome, String email, String senha) {
-        this.nome = nome;
+    public User(String name, String email, String password) {
+        this.name = name;
         this.email = email;
-        this.senha = senha;
+        this.password = password;
     }
 
     public User() {
@@ -36,12 +36,12 @@ public class User {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -52,11 +52,11 @@ public class User {
         this.email = email;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
